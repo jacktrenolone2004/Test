@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+  <!-- These two lines load the AR libraries. Don't change them. -->
+  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+</head>
+
+<body style="margin: 0; overflow: hidden;">
+
+  <!--
+    imageTargetSrc points to your targets.mind file.
+    This one file contains all 3 target images, in the order they were added
+    when it was created (target 0, target 1, target 2).
+  -->
+  <a-scene
+    mindar-image="imageTargetSrc: ./targets.mind;"
+    color-space="sRGB"
+    renderer="colorManagement: true, physicallyCorrectLights"
+    vr-mode-ui="enabled: false"
+    device-orientation-permission-ui="enabled: false"
+  >
+
+    <!-- One video tag per target. Muted + playsinline is needed for phones to autoplay. -->
+    <a-assets>
+      <video id="arVideo1" src="./video1.mp4" loop muted playsinline webkit-playsinline preload="auto"></video>
+      <video id="arVideo2" src="./video2.mp4" loop muted playsinline webkit-playsinline preload="auto"></video>
+      <video id="arVideo3" src="./video3.mp4" loop muted playsinline webkit-playsinline preload="auto"></video>
+    </a-assets>
+
+    <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+    <!--
+      targetIndex matches the order of images inside targets.mind:
+      0 = first image, 1 = second image, 2 = third image.
+      If your videos show up on the wrong image, swap the targetIndex numbers below.
+    -->
+
+    <a-entity id="target0" mindar-image-target="targetIndex: 0">
+      <a-video src="#arVideo1" width="1" height="1.778" position="0 0 0" rotation="0 0 0"></a-video>
+    </a-entity>
+
+    <a-entity id="target1" mindar-image-target="targetIndex: 1">
+      <a-video src="#arVideo2" width="1" height="1.778" position="0 0 0" rotation="0 0 0"></a-video>
+    </a-entity>
+
+    <a-entity id="target2" mindar-image-target="targetIndex: 2">
+      <a-video src="#arVideo3" width="1" height="1.778" position="0 0 0" rotation="0 0 0"></a-video>
+    </a-entity>
+
+  </a-scene>
+
+  <script>
+    // This makes each video play only while its own target image is visible,
+    // and pause when that target goes out of view.
+    // Each block below handles one target + video pair.
+
+    const target0 = document.querySelector("#target0");
+    const video1 = document.querySelector("#arVideo1");
+    target0.addEventListener("targetFound", () => { video1.play(); });
+    target0.addEventListener("targetLost", () => { video1.pause(); });
+
+    const target1 = document.querySelector("#target1");
+    const video2 = document.querySelector("#arVideo2");
+    target1.addEventListener("targetFound", () => { video2.play(); });
+    target1.addEventListener("targetLost", () => { video2.pause(); });
+
+    const target2 = document.querySelector("#target2");
+    const video3 = document.querySelector("#arVideo3");
+    target2.addEventListener("targetFound", () => { video3.play(); });
+    target2.addEventListener("targetLost", () => { video3.pause(); });
+  </script>
+
+</body>
+</html>
